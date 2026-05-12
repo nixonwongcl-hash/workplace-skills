@@ -49,6 +49,9 @@ def process_reorder(file_path, target_days, max_shd=None):
     if 'SHD_Num' in df.columns:
         df.drop(columns=['SHD_Num'], inplace=True)
 
+    if 'Day 1 to 7' in df.columns:
+        df.drop(columns=['Day 1 to 7'], inplace=True)
+
     # Generate Output paths in the same directory as input
     base_dir = os.path.dirname(file_path)
     base_file = os.path.basename(file_path)
