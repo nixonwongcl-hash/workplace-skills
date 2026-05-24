@@ -5,29 +5,58 @@ description: Generates a stock on hand (SOH) check or mass recall report for a s
 
 # Check Article Skill
 
-**Trigger:** The user uploads an Excel inventory file, provides a list of article codes, and uses the keyword "check article".
+## 1. Skill Overview
+The **Check Article** skill automates the extraction and formatting of stock status data from a master Stock on Hand (SHD) inventory report. It is typically used for auditing specific items, performing quality control sweeps, or executing a **Mass Recall** across stores. The output isolates stores that hold positive stock of the targeted articles and outputs a clean, executive-ready Excel sheet.
 
-## Step 1: Processing the Data
-When writing or executing the Python script to process the file, ensure the following logic is strictly applied:
-1. Filter the dataset for the provided `ArticleCode` list.
-2. Only include rows where `SOH > 0`.
+## 2. Trigger Details
+- **Trigger Keywords**: `"check article"`, `"recall report"`, `"soh check"`, `"check stock on hand"`.
+- **Trigger Condition**: When these keywords are detected, the agent should search the conversation or downloads for a master SHD Excel file and proceed with the workflow.
 
-## Step 2: Output Formatting
-The script must generate an Excel output file named with the format `Recall_Report_DDMMYYYY.xlsx` or `Article_Check_DDMMYYYY.xlsx`.
+## 3. Data Input Requirements
+- **Required Spreadsheet**: Standard master SHD Excel export.
+- **Required Columns**:
+  - `ArticleCode` (Numeric/String representing unique article numbers)
+  - `ArticleDesc` (String describing the article)
+  - `Category` (String representing product categories)
+  - `Store` (String representing the store identifier, e.g. `"1487 - KKDG"`)
+  - `SOH` (Numeric representing current stock on hand)
 
-Headers MUST be in this exact order:
-1. **ArticleCode**
-2. **ArticleDesc**
-3. **Category**
-4. **Reason** (Default to "Mass Recall" or "Article Check" depending on context)
-5. **Sender Store** (Maps to the 'Store' column in the raw data)
-6. **Sender SOH** (Maps to the 'SOH' column in the raw data)
+### Setup Questions to Ask the User:
+Before executing, clarify:
+1. **Target Article Codes**: What specific article codes should be checked?
+2. **Reason**: What is the reason for this check or recall? (e.g. `"Wrong Label"`, `"Short Expiry"`, `"Return to Vendor"`, defaults to `"Article Check"` or `"Mass Recall"` depending on the trigger context).
 
-*Note: Do NOT include Sender SHD, Receiver Store, Receiver SOH, Receiver SHD, OOS, or Transfer Qty. This report is strictly for checking SOH at stores.*
+## 4. Detailed Business & Calculation Logic
+1. **Key Standardization**: Normalize `ArticleCode` to integers/strings to prevent matching failures caused by formatting.
+2. **Filtering**:
+   - Filter the dataset strictly for the provided target `ArticleCode` list.
+   - Keep only rows where `SOH > 0`.
+3. **Column Mapping & Renaming**:
+   - Add a `Reason` column mapping the target articles to their respective reasons.
+   - Rename the `Store` column to `Outlet Involved`.
+4. **Sorting**: Sort the results alphabetically by `ArticleCode`, then by `Outlet Involved`.
 
-### Formatting Rules for Output Files
-All output Excel files must apply the following formatting:
-- All columns text MUST be conditionally aligned to the **center**, EXCEPT the `ArticleDesc` column which must be **aligned to the left**.
-- Apply Excel data filters across all headers.
-- Format the header row background to **black** and the font color to **white**.
-- Auto-optimize all column widths to fit the content cleanly so it looks visually nice.
+## 5. Output Structure & Formatting Standards
+- **File Name Format**: `Recall_Report_DDMMYYYY.xlsx` or `Article_Check_DDMMYYYY.xlsx`
+- **Output Directory**: Saved to the local workspace and automatically copied to the user's `C:\Users\USER\Downloads` folder.
+- **Worksheet Name**: `Recall Report` or `Article Check`
+- **Column Order (Exact)**:
+  1. `ArticleCode` (Center-aligned)
+  2. `ArticleDesc` (Left-aligned)
+  3. `Category` (Center-aligned)
+  4. `Reason` (Center-aligned)
+  5. `Outlet Involved` (Center-aligned)
+  6. `SOH` (Center-aligned, formatted with thousands separator `#,##0`)
+
+### Styling & Aesthetics:
+- **Font**: Arial (Header size 11, data size 10)
+- **Header Row**: Foreground White (`#FFFFFF`), Background Solid Black (`#000000`), bold, center-aligned.
+- **Data Rows**: Left-aligned for text descriptions, center-aligned for all other columns.
+- **Auto-Filter**: Enabled across columns A to F (`A1:F{max_row}`).
+- **Widths**: Auto-optimize column dimensions based on maximum content length with a padding of 4 (`max_len + 4`), minimum width of 12.
+
+## 6. Execution Command
+The processing can be automated by executing the script `process_recall.py` which applies these exact rules:
+```powershell
+python C:\Users\USER\.gemini\antigravity\playground\azure-radiation\process_recall.py
+```

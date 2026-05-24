@@ -44,7 +44,7 @@ def process_reorder(file_path):
     # Pipeline Stock
     for col in ['SOH', 'OpenPO', 'OpenSTO', 'Intransit']:
         df[col] = pd.to_numeric(df.get(col, 0), errors='coerce').fillna(0)
-    df['Pipeline Stock'] = df['SOH'] + df['OpenPO'] + df['OpenSTO'] + df['Intransit']
+    df['Pipeline Stock'] = df['SOH'] + df['OpenPO'] + np.maximum(df['OpenSTO'], df['Intransit'])
 
     # TRP
     if 'TRP' in df.columns:

@@ -5,88 +5,87 @@ description: Analyzes SHD Excel data to perform stock rotation based on exact fi
 
 # Excel Stock Rotation Skill
 
-**Trigger:** The user uploads an Excel inventory file and uses the keyword "rotate" or "rotation".
+## 1. Skill Overview
+The **Excel Stock Rotation** skill automates the redistribution of slow-moving or excess inventory to understocked or out-of-stock retail outlets. Operating within pre-defined geographical or operational store clusters, the rotation engine identifies high-stock "Senders" and low-stock "Receivers". By balancing inventory levels, the skill minimizes waste, mitigates out-of-stock (OOS) conditions, and avoids redundant procurement.
 
-## Step 1: Mandatory Clarification
-**CRITICAL:** Before processing any data or running the Excel file, you **MUST** ask the user the following 4 questions:
-1. Which specific **Outlets or Pre-defined Clusters** should be included in this rotation?
-   - **Pre-defined Clusters:**
-     - **Cluster 1**: KKDG, KKIN, KKLD, KKCM, KKGM, KKJP, KKDA, SAKN, SABF, SATR
-     - **Cluster 2**: SALD, SATW
-2. **Target Coverage Limits (Defaults):** 
-   - **Receivers:** Only receive if SHD <= 30 Days. Top up to 120 Days limit.
-   - **Senders:** Only send if SHD > 120 Days. Keep 120 Days of supply.
-   - *(Ask the user if they want to override these defaults).*
-3. Do you want to filter this rotation by a **Specific Category** or analyze **All Categories**? (e.g., "MEDICINE only" or "All")
-   - **Note 1 (Category):** If "MEDICINE" is selected, you MUST ask a follow-up: Should we rotate **Group B**, **Group C**, or **Both**?
-   - **Note 2 (SOS):** Do you want to filter by **SOS** type? (Specify "DC", "DSP", or skip for "All")
-   *Available categories for reference:*
-   - BABY CARE, BEAUTY ACCESSORIES, BEAUTY SUPPLEMENT, CAMPAIGN PREMIUM, CONFECTIONARY, DENTAL ORAL & LIP CARE, DIAGNOSTIC & HEALTH AIDS, EYE, EAR & NOSE, FAMILY PLANNING, FIRST AID/SURGICAL, FOOT CARE, GENERAL PRODUCT, HAIR CARE, HEALTH FOOD & NUTRITION, HEALTH SUPPLEMENT, HEALTH SUPPLEMENT - CHILDREN, MEDICINE, MENS GROOMING, OTC MEDICINE, PERSONAL CARE, PET CARE, PREMIUM GIFT, REHABILITATION AIDS, SKIN CARE, SLIMMING & DETOX.
-4. Any **Special Instructions** for custom rules rotation? (e.g., skip specific outlets as senders, or prioritize specific items)
+## 2. Trigger Details
+- **Trigger Keywords**: `"rotate"`, `"rotation"`, `"stock rotation"`, `"inventory balancing"`.
+- **Trigger Condition**: Upload of a master SHD inventory Excel report alongside the keywords.
 
-*Wait for the user's response to these 4 questions before proceeding to Step 2.*
+## 3. Mandatory Setup Questions
+Before running the rotation calculations, you **MUST** present these 4 setup questions to the user and wait for their explicit input:
+1. **Outlets or Pre-defined Clusters**: Which specific outlets or clusters should be included?
+   - **Cluster 1**: `KKDG`, `KKIN`, `KKLD`, `KKCM`, `KKGM`, `KKJP`, `KKDA`, `SAKN`, `SABF`, `SATR`
+   - **Cluster 2**: `SALD`, `SATW`
+2. **Target Coverage Limits (Defaults)**:
+   - **Receivers**: Accept stock only if `SHD <= 30 Days`. Top up to `120 Days` of supply.
+   - **Senders**: Send stock only if `SHD > 120 Days`. Retain a minimum of `120 Days` of supply.
+   - *Ask the user if they wish to override these default limits.*
+3. **Category & Classification Filtering**:
+   - Do you want to filter by a **Specific Category** (e.g. `"MEDICINE only"`) or analyze **All Categories**?
+     - *If "MEDICINE" is selected, follow up*: Should we rotate **Group B**, **Group C**, or **Both** Poison Classes?
+     - *If SOS filtering is desired*: Should we filter by **SOS** type (`"DC"`, `"DSP"`, or `"All"`)?
+4. **Special Instructions**: Are there any custom rules to apply? (e.g., specific outlets to skip as senders, or priority items).
 
-## Step 2: Rotation Logic & Rules
-When writing or executing the Python script (`scripts/excel_rotation.py`) to process the file, ensure the following logic is strictly applied:
+## 4. Detailed Business & Calculation Logic
+1. **Daily Demand Calculation**:
+   - `Daily Demand = (Day 1 to 30 + Day 31 to 60 + Day 61-90) / 90`
+2. **Receiver Need (`QtyNeeded`)**:
+   - `QtyNeeded = (Daily Demand * TargetDays) - SOH` where `TargetDays` is the top-up limit (default: 120).
+3. **Tiered Senders Sourcing**:
+   - **Tier 1 (Dead Stock)**: Identified by `SHD == 9999`.
+     - Senders keep `0` units, **except** when `RP Type` contains the word `Forecast` (e.g. `"Store SGO with Forecast"`), in which case the sender must retain exactly `1` unit as safety stock.
+   - **Tier 2 (Slow Stock)**: Identified by `SHD >= 180`.
+     - Senders keep `150` days worth of their own daily demand (`150 * Daily Demand`); any inventory in excess of this keep limit is available to rotate.
+4. **Category & Poison Filtering**:
+   - If **MEDICINE** is targeted, filter by `PoisonClass` using exact substring matches:
+     - **Group B**: Only rows where `PoisonClass` contains `"Group B"`.
+     - **Group C**: Only rows where `PoisonClass` contains `"Group C"`.
+     - **Both**: Include both Group B and Group C items.
+   - **SOS Type Matching**: If specified, filter strictly by the `SOS` column (`"DC"` or `"DSP"`).
+5. **Receiving Priority**:
+   - Priority is given to receiving outlets whose `OOS Indicator` is marked as `"OOS"`.
+6. **Movements**: Keep a comprehensive log of all suggested transfers even if within cool-down periods.
 
-### Core Calculations
-- **Daily Demand** = `(Day 1 to 30 + Day 31 to 60 + Day 61-90) / 90`
-- **Receiver Need (`QtyNeeded`)** = `(DailyDemand * TargetDays) - SOH`.
-- **Target Days (Receiver only)**: Controlled dynamically via user input (e.g., `150` days).
-
-### Tiered Sourcing (Identifying Potential Senders)
-- **Tier 1 (Dead Stock)**: `SHD == 9999`. 
-  - Keep logic: Sender keeps `0` units, **unless** the `RP Type` contains the word `Forecast` (e.g., "Store SGO with Forecast"), in which case the sender keeps `1` unit.
-- **Tier 2 (Slow Stock)**: `SHD >= 180`. 
-  - Keep logic: Sender keeps `150` days worth of their own daily demand; anything in excess is available to send.
-
-### Category & Classification Filtering
-- If **MEDICINE** is selected, filter by the requested `PoisonClass`:
-  - **Group B**: Only include items where `PoisonClass` contains "Group B".
-  - **Group C**: Only include items where `PoisonClass` contains "Group C".
-  - **Both**: Include items from both "Group B" and "Group C".
-- **SOS Filtering (Optional)**: If specified, filter by the `SOS` column for "DC" or "DSP" matches.
-- For all other categories, filter normally by the `Category` column.
-
-### Receiving Priority
-- Priority MUST be given to receiving outlets whose `OOS Indicator` is marked as "OOS".
-- (Note: Do NOT enforce the historical 60-day Cool Down period as a block; instead, log all movements).
-
-## Step 3: Output Formatting
-The script must generate exactly TWO Excel output files, named with the format `DDMMYYYY`.
+## 5. Output Structure & Formatting Standards
+The engine generates exactly two output Excel files, saved locally using the date format `DDMMYYYY`:
 
 ### File 1: `Rotation DDMMYYYY.xlsx`
-Headers MUST be in this exact order:
-1. **ArticleCode**
-2. **ArticleDesc**
-3. **Category**
-4. **Reason** (e.g., "Deadstock Clearance", "Slow Stock")
-5. **Sender Store**
-6. **Sender SOH**
-7. **Sender SHD**
-8. **Receiver Store**
-9. **Receiver SOH**
-10. **Receiver SHD**
-11. **OOS** (Convert original "OOS" string to "YES", otherwise "NO")
-12. **Transfer Qty**
+Contains the detailed transfer instructions. Column order is strictly:
+1. `ArticleCode` (Center-aligned)
+2. `ArticleDesc` (Left-aligned)
+3. `Category` (Center-aligned)
+4. `Reason` (e.g., `"Deadstock Clearance"`, `"Slow Stock"`)
+5. `Sender Store` (Center-aligned)
+6. `Sender SOH` (Center-aligned)
+7. `Sender SHD` (Center-aligned)
+8. `Receiver Store` (Center-aligned)
+9. `Receiver SOH` (Center-aligned)
+10. `Receiver SHD` (Center-aligned)
+11. `OOS` (Convert original `"OOS"` string to `"YES"`, otherwise `"NO"`)
+12. `Transfer Qty` (Center-aligned)
 
 ### File 2: `Rotation_History_Summary DDMMYYYY.xlsx`
-Must contain exactly two sheets:
-- **Sheet 1 ("Movement Log")**: Minimal log containing: Date, Sender Store, Receiver Store, ArticleCode, ArticleDesc, Transfer Qty
-- **Sheet 2 ("Summary")**: A combined single sheet showing all aggregated reporting: 
-  - Total tracked lines moved (Number of rows)
-  - Total OOS lines covered
-  - Total deadstock (9999) lines moved
-  - **New**: Total DC lines and DSP lines
-  - Summary lines statistics per Sender / Receiver outlet split into **DC** and **DSP** columns.
+Contains two sheets:
+- **Sheet 1 (`Movement Log`)**: A flat audit trail containing columns: `Date`, `Sender Store`, `Receiver Store`, `ArticleCode`, `ArticleDesc`, `Transfer Qty`.
+- **Sheet 2 (`Summary`)**: Executive metrics showing:
+  - Total rows moved.
+  - Total OOS lines covered.
+  - Total deadstock (`9999`) lines moved.
+  - Total `DC` lines and `DSP` lines.
+  - Pivot table of sender/receiver outlet splits divided into distinct `DC` and `DSP` quantity columns.
 
-### Formatting Rules for Output Files
-All output Excel files must apply the following formatting:
-- All columns text MUST be conditionally aligned to the **center**, EXCEPT the `ArticleDesc` column which must be **aligned to the left**.
-- Apply Excel data filters across all headers (except on the combined Summary sheet).
-- Format the header row background to **black** and the font color to **white**.
-- Auto-optimize all column widths to fit the content cleanly so it looks visually nice.
+### Styling & Aesthetics:
+- **Header Row Style**: Solid Black background, White bold text, center-aligned.
+- **Data Alignments**: Center-aligned for all columns except `ArticleDesc`, which is left-aligned.
+- **Auto-Filter**: Enabled on all column headers (except the summary pivot sheet).
+- **Auto-Width**: Auto-adjust column widths based on maximum content length + 2 padding.
 
-## Advanced Logic Flags (Internal)
-- **`--receiver_shd_limit [Days]`**: Only consider receivers whose existing SHD is equal to or less than this value.
-- **`--ignore_forecast`**: Skip the "keep 1 unit" rule for items where RP Type includes "Forecast".
+## 6. Execution Command
+The python rotation engine is run from the workspace using the following command:
+```powershell
+python scripts/excel_rotation.py
+```
+### Advanced CLI Flags:
+- `--receiver_shd_limit [Days]`: Set strict receiving SHD limits (e.g., `--receiver_shd_limit 30`).
+- `--ignore_forecast`: Skip the safety "keep 1 unit" rule for forecast-enabled Senders.
