@@ -8,10 +8,11 @@ These skills are structured to be executed seamlessly by both developers and AI 
 
 ## 📋 Directory of Available Skills
 
-This repository contains **8 core skills** optimized for automated logistics, procurement, and operations:
+This repository contains **9 core skills** (including a **Unified Workspace Orchestrator** entry point) optimized for automated logistics, procurement, and operations:
 
 | Skill Folder | Skill Name | Trigger Keywords | Primary Business Function |
 | :--- | :--- | :--- | :--- |
+| [📁 `workspace_orchestrator`](./workspace_orchestrator) | **Workspace Orchestrator** | `"run skill"`, `"workspace"`, `"process"` | **Unified Master Entry Point**: Automatically inspects spreadsheet data to auto-detect file schemas, presents recommended skills, and displays interactive selection menus. |
 | [📁 `check_article`](./check_article) | **Check Article** | `"check article"`, `"recall report"`, `"soh check"` | Isolates active stock levels (SOH > 0) of specific articles across retail outlets for sweeps or mass recalls. |
 | [📁 `excel_pareto_mapping`](./excel_pareto_mapping) | **Excel Pareto Mapping** | `"map pareto"`, `"map sales data to shd"` | Maps sales quantities, amounts, and Pareto classifications from sales histories into Stock on Hand (SHD) reports. |
 | [📁 `excel_reorder`](./excel_reorder) | **Excel Reorder Calculation** | `"calculate reorder"`, `"reorder qty"`, `"reorder"` | Implements 4 distinct Pareto-driven replenishment models, rounding quantities to Target Reorder Pack sizes (TRP). |
