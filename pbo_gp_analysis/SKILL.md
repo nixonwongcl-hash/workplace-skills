@@ -19,24 +19,25 @@ The **PBO GP Analysis** skill automates the tracking, prioritization, and margin
   - `ArticleCode` (Numeric/String unique identifier for items)
   - `ArticleName` (Unique name/description of the item)
   - `BO_Type` (Brand outlet indicator, e.g. `"BO SEMI"`, `"BO FULL"`, `"BO MASS"`, `"Own Brand"`, `"Non-BO"`)
-  - `Qty (EA)` (Sales quantity in units)
+  - `Qty (1S)` (Sales quantity in singles/tablets/capsules, used for direct unit-level normalization)
   - `SalesAmt` (Gross sales amount)
   - `GrossProfit` (Total Gross Profit value)
   - `GP %` (Raw profit margin decimal, e.g. `0.605417` representing `60.54%`)
 
 ## 4. Detailed Business & Calculation Logic
-1. **Numeric Normalization**: Clean and convert `Qty (EA)`, `SalesAmt`, `GrossProfit`, and `GP %` into standard floating-point numbers, replacing errors or missing values with `0`.
+1. **Numeric Normalization**: Clean and convert `Qty (1S)`, `SalesAmt`, `GrossProfit`, and `GP %` into standard floating-point numbers, replacing errors or missing values with `0`.
 2. **Category & Article Grouping**: Group the raw data by `PenetrationTracker` and `ArticleCode` to ensure one row per unique product category item, keeping the first occurrence of `ArticleName` and `BO_Type`.
-3. **Margin Calculation**:
-   - `Unit_Selling_Price` = `SalesAmt / Qty (EA)` (where `Qty (EA) > 0`, else `0`).
+3. **Margin & Unit Normalization**:
+   - Products are sold in different pack sizes (e.g. box of 100 vs box of 10). To ensure a fair unit-level comparison across the entire category, quantities are normalized to individual tablets/capsules using the `Qty (1S)` column.
+   - `Unit_Selling_Price` = `SalesAmt / Qty (1S)` (where `Qty (1S) > 0`, else `0`).
    - `GP_by_SalesAmt` = `GP % * Unit_Selling_Price`.
 4. **BO Priorities (Tiered Sourcing Logic)**:
    - Identify Brand Outlet (BO) items using BO Types list: `['BO SEMI', 'BO FULL', 'BO MASS', 'Own Brand']`.
    - In each category, when ranking products for the three winners, **always select the top BO item first** if any exist. Only fall back to `Non-BO` products if there are no Brand Outlet or Own Brand products available in that category.
 5. **Winner Selection (3 per category)**:
    - **Highest GP%**: The product with the maximum `GP %` value (expressed as a percentage).
-   - **Highest GP by SalesAmt**: The product with the maximum computed gross profit dollars (`GP_by_SalesAmt`).
-   - **Highest Selling Price**: The product with the maximum `Unit_Selling_Price`.
+   - **Highest GP by SalesAmt**: The product with the maximum computed gross profit dollars per capsule/tablet (`GP_by_SalesAmt`).
+   - **Highest Selling Price**: The product with the maximum `Unit_Selling_Price` per capsule/tablet.
 
 ## 5. Output Structure & Formatting Standards
 - **File Name Format**: `Penetration_Pivot_Analysis_Results_[DDMMYYYY].xlsx`
