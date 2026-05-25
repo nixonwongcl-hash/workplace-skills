@@ -56,7 +56,7 @@ The **PWP Performance Analysis** skill automates the tracking, pivoting, and rep
 ## 6. Execution Command
 The performance analysis is executed via:
 ```powershell
-python scripts/pwp_analysis.py "path/to/PWP_Raw_Data.xlsx"
+python .agent/skills/pwp_analysis/scripts/pwp_analysis.py "path/to/PWP_Raw_Data.xlsx"
 ```
 ### Optional Run Flags:
 - `--output_root [dir]`: Set custom destination directories for the output folder structure.

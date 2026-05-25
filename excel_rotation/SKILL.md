@@ -84,7 +84,7 @@ Contains two sheets:
 ## 6. Execution Command
 The python rotation engine is run from the workspace using the following command:
 ```powershell
-python scripts/excel_rotation.py
+python .agent/skills/excel_rotation/scripts/excel_rotation.py
 ```
 ### Advanced CLI Flags:
 - `--receiver_shd_limit [Days]`: Set strict receiving SHD limits (e.g., `--receiver_shd_limit 30`).

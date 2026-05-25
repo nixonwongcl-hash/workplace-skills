@@ -71,7 +71,7 @@ The sheet sections are mapped strictly into target categories:
 ## 6. Execution Command
 The procurement workflow is run from the workspace using:
 ```powershell
-python scripts/execute_pur.py "<LARK_SHEET_URL>"
+python .agent/skills/procurement_update/scripts/execute_pur.py "<LARK_SHEET_URL>"
 ```
 ### CLI Run Arguments:
 - `--doc-only`: Create the Lark Doc and local output files but skip sending IM notifications.

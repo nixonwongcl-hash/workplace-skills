@@ -58,5 +58,5 @@ Before executing, clarify:
 ## 6. Execution Command
 The processing can be automated by executing the script `process_recall.py` which applies these exact rules:
 ```powershell
-python C:\Users\USER\.gemini\antigravity\playground\azure-radiation\process_recall.py
+python .agent/skills/check_article/scripts/process_recall.py
 ```

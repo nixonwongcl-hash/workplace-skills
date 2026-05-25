@@ -68,7 +68,7 @@ The **PBO GP Analysis** skill automates the tracking, prioritization, and margin
 ## 6. Execution Command
 Automate the analysis by executing the production script from the workspace directory:
 ```powershell
-python scripts/pbo_gp_analysis.py -i "C:\Users\USER\Downloads\PBO Penetration Tracker AM_Penetration Pivot_Pivot table 25052026.csv"
+python .agent/skills/pbo_gp_analysis/scripts/pbo_gp_analysis.py -i "C:\Users\USER\Downloads\PBO Penetration Tracker AM_Penetration Pivot_Pivot table 25052026.csv"
 ```
 ### Required Flags:
 - `-i` / `--input`: Absolute file path to the raw input Penetration Tracker Pivot CSV/Excel file.
