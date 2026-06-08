@@ -55,4 +55,13 @@ Analyze the JSON payload and render a stunning, high-readability Markdown respon
 > **How would you like to proceed?** (e.g. reply *"Run 2 on SHD"* or *"Yes, run PWP"*)
 
 ### Step 3: Execute the Chosen Skill
-Once the user confirms the selection, execute the corresponding sub-skill CLI command directly as documented in their individual `SKILL.md` profiles.
+Once the user selects a skill from the menu, the agent **MUST** ask a secondary confirmation question before running any CLI command or executing the sub-skill.
+
+#### Mandatory Confirmation Question Protocol:
+1. **Formulate a clear confirmation request**: Present the user with a recap of the action you are about to take.
+   * Format: *"I am about to run **[Skill Name]** on the file **[File Name]** in sheet **[Sheet Name]** (if applicable). Do you want to proceed?"*
+2. **Present the exact command**: Show the user the command line or script parameters you intend to run.
+3. **Wait for explicit user permission**: Do not execute any commands or call any tools that perform the action until the user responds with a positive affirmation (e.g. "Yes", "Go ahead", "Confirm").
+
+Once explicit confirmation is received, execute the corresponding sub-skill CLI command directly as documented in their individual `SKILL.md` profiles.
+

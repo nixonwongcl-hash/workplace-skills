@@ -4,7 +4,13 @@ import sys
 import argparse
 
 def log(msg):
-    print(msg)
+    try:
+        print(msg)
+    except UnicodeEncodeError:
+        try:
+            print(msg.encode(sys.stdout.encoding, errors='replace').decode(sys.stdout.encoding))
+        except:
+            print(str(msg).encode('ascii', errors='replace').decode('ascii'))
     sys.stdout.flush()
 
 def main():
@@ -40,7 +46,7 @@ def main():
     desc_lookup = df_shd[['ArticleCode_key', 'ArticleDesc']].drop_duplicates('ArticleCode_key').set_index('ArticleCode_key')['ArticleDesc']
 
     log("Merging Pareto data into SHD...")
-    cols_to_map = ['Sales Qty (Past 3 Months)', 'Sales Amt (Past 3 Months)', 'CombinedPareto']
+    cols_to_map = ['CombinedPareto']
     # Ensure these columns exist in Pareto
     available_cols = [c for c in cols_to_map if c in df_pareto.columns]
     df_pareto_subset = df_pareto[['ArticleCode_key', 'SiteCode_key'] + available_cols]
@@ -75,8 +81,53 @@ def main():
 
     log(f"Saving to {output_path}...")
     with pd.ExcelWriter(output_path, engine='xlsxwriter') as writer:
-        df_mapped_shd.to_excel(writer, index=False, sheet_name='Mapped_SHD')
-        df_summary.to_excel(writer, index=False, sheet_name='Summary')
+        def write_sheet(df, sheet_name, left_align_cols):
+            # Write data starting at row 1 (excluding headers)
+            df.to_excel(writer, index=False, sheet_name=sheet_name, header=False, startrow=1)
+            workbook = writer.book
+            worksheet = writer.sheets[sheet_name]
+            
+            # Define formats
+            header_format = workbook.add_format({
+                'bold': True,
+                'text_wrap': False,
+                'valign': 'vcenter',
+                'align': 'center',
+                'fg_color': '#000000',
+                'font_color': '#FFFFFF',
+                'border': 1
+            })
+            left_format = workbook.add_format({'align': 'left', 'valign': 'vcenter'})
+            center_format = workbook.add_format({'align': 'center', 'valign': 'vcenter'})
+            
+            # Write headers manually at row 0
+            for col_num, value in enumerate(df.columns.values):
+                worksheet.write(0, col_num, value, header_format)
+                
+            # Enable auto-filter
+            worksheet.autofilter(0, 0, len(df), len(df.columns) - 1)
+            
+            # Set row height for header
+            worksheet.set_row(0, 24)
+            
+            # Alignments & autofit columns
+            for col_num, col_name in enumerate(df.columns):
+                fmt = left_format if col_name in left_align_cols else center_format
+                
+                # Find max length of cell contents
+                max_len = len(str(col_name))
+                for val in df[col_name]:
+                    if pd.notna(val):
+                        val_str = str(val)
+                        if val_str.endswith('.0') and isinstance(val, (int, float)):
+                            val_str = str(int(val))
+                        max_len = max(max_len, len(val_str))
+                
+                # Set column width with padding
+                worksheet.set_column(col_num, col_num, max_len + 3, fmt)
+
+        write_sheet(df_mapped_shd, 'Mapped_SHD', ['ArticleDesc'])
+        write_sheet(df_summary, 'Summary', ['Article Description'])
 
     log("Done!")
     log(f"Total Pareto items: {len(df_pareto)}")

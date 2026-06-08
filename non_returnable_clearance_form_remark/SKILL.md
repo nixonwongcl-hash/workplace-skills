@@ -1,12 +1,12 @@
 ---
-name: Non Returnable Clearance
+name: Non Returnable Clearance Form Remark
 description: "Analyzes an Excel-based clearance list against SHD report to determine clearance actions and stock rotation suggestions for nearing expiration items."
 ---
 
-# Non Returnable Clearance Skill
+# Non Returnable Clearance Form Remark Skill
 
 ## 1. Skill Overview
-The **Non Returnable Clearance** skill processes manual clearance spreadsheets of retail inventory that is near expiry or non-returnable. It cross-references items against a master Stock on Hand (SHD) report and a regional 9999 listing database to determine store-level clearance instructions and identify optimal internal stock transfer (rotation) opportunities. It generates highly specific remarks based on poison classes, expiry dates, and warehouse locations.
+The **Non Returnable Clearance Form Remark** skill processes manual clearance spreadsheets of retail inventory that is near expiry or non-returnable. It cross-references items against a master Stock on Hand (SHD) report and a regional 9999 listing database to determine store-level clearance instructions and identify optimal internal stock transfer (rotation) opportunities. It generates highly specific remarks based on poison classes, expiry dates, and warehouse locations.
 
 ## 2. Trigger Details
 - **Trigger Keywords**: `"non returnable clearance"`, `"clearance rotation"`, `"expiry clearance matching"`.

@@ -1,12 +1,12 @@
 ---
-name: Excel Stock Rotation
+name: SHD Stock Rotation
 description: Analyzes SHD Excel data to perform stock rotation based on exact fill and tiered sourcing logic. Triggered by keywords "rotate" or "rotation" along with an Excel file.
 ---
 
-# Excel Stock Rotation Skill
+# SHD Stock Rotation Skill
 
 ## 1. Skill Overview
-The **Excel Stock Rotation** skill automates the redistribution of slow-moving or excess inventory to understocked or out-of-stock retail outlets. Operating within pre-defined geographical or operational store clusters, the rotation engine identifies high-stock "Senders" and low-stock "Receivers". By balancing inventory levels, the skill minimizes waste, mitigates out-of-stock (OOS) conditions, and avoids redundant procurement.
+The **SHD Stock Rotation** skill automates the redistribution of slow-moving or excess inventory to understocked or out-of-stock retail outlets. Operating within pre-defined geographical or operational store clusters, the rotation engine identifies high-stock "Senders" and low-stock "Receivers". By balancing inventory levels, the skill minimizes waste, mitigates out-of-stock (OOS) conditions, and avoids redundant procurement.
 
 ## 2. Trigger Details
 - **Trigger Keywords**: `"rotate"`, `"rotation"`, `"stock rotation"`, `"inventory balancing"`.
@@ -84,7 +84,7 @@ Contains two sheets:
 ## 6. Execution Command
 The python rotation engine is run from the workspace using the following command:
 ```powershell
-python .agent/skills/excel_rotation/scripts/excel_rotation.py
+python .agent/skills/shd_stock_rotation/scripts/excel_rotation.py
 ```
 ### Advanced CLI Flags:
 - `--receiver_shd_limit [Days]`: Set strict receiving SHD limits (e.g., `--receiver_shd_limit 30`).

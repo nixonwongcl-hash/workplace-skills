@@ -1,12 +1,12 @@
 ---
-name: Check Article
+name: Article Check Recall Return
 description: Generates a stock on hand (SOH) check or mass recall report for a specific list of articles using SHD Excel data. Triggered by keyword "check article".
 ---
 
-# Check Article Skill
+# Article Check Recall Return Skill
 
 ## 1. Skill Overview
-The **Check Article** skill automates the extraction and formatting of stock status data from a master Stock on Hand (SHD) inventory report. It is typically used for auditing specific items, performing quality control sweeps, or executing a **Mass Recall** across stores. The output isolates stores that hold positive stock of the targeted articles and outputs a clean, executive-ready Excel sheet.
+The **Article Check Recall Return** skill automates the extraction and formatting of stock status data from a master Stock on Hand (SHD) inventory report. It is typically used for auditing specific items, performing quality control sweeps, or executing a **Mass Recall** across stores. The output isolates stores that hold positive stock of the targeted articles and outputs a clean, executive-ready Excel sheet.
 
 ## 2. Trigger Details
 - **Trigger Keywords**: `"check article"`, `"recall report"`, `"soh check"`, `"check stock on hand"`.
@@ -58,5 +58,6 @@ Before executing, clarify:
 ## 6. Execution Command
 The processing can be automated by executing the script `process_recall.py` which applies these exact rules:
 ```powershell
-python .agent/skills/check_article/scripts/process_recall.py
+python .agent/skills/article_check_recall_return/scripts/process_recall.py
 ```
+

@@ -1,12 +1,12 @@
 ---
-name: Excel Reorder Calculation
+name: Reorder Suggested Qty
 description: Calculates suggested reorder quantities based on Pareto strategies (A, B, C), using SHD Excel data. Triggered by keywords "calculate reorder", "reorder qty", or "reorder".
 ---
 
-# Excel Reorder Calculation (Pareto Edition)
+# Reorder Suggested Qty Skill
 
 ## 1. Skill Overview
-The **Excel Reorder Calculation** skill automates multi-strategy replenishment forecasting for store inventories. It implements a **Pareto-driven replenishment engine** that dynamically reacts to an item's Pareto classification (Class A, B, or C). It calculates daily demand, computes total pipeline stock, projects supply days, applies distinct reorder strategies, and rounds quantities to fit Target Reorder Pack sizes (TRP) while applying visual alert indicators.
+The **Reorder Suggested Qty** skill automates multi-strategy replenishment forecasting for store inventories. It implements a **Pareto-driven replenishment engine** that dynamically reacts to an item's Pareto classification (Class A, B, or C). It calculates daily demand, computes total pipeline stock, projects supply days, applies distinct reorder strategies, and rounds quantities to fit Target Reorder Pack sizes (TRP) while applying visual alert indicators.
 
 ## 2. Trigger Details
 - **Trigger Keywords**: `"calculate reorder"`, `"reorder qty"`, `"reorder"`, `"replenish stock"`.
@@ -72,5 +72,5 @@ The **Excel Reorder Calculation** skill automates multi-strategy replenishment f
 ## 6. Execution Command
 The reorder calculation is performed by executing the python CLI script:
 ```powershell
-python .agent/skills/excel_reorder/scripts/excel_reorder.py "path/to/SHD_File.xlsx"
+python .agent/skills/reorder_suggested_qty/scripts/excel_reorder.py "path/to/SHD_File.xlsx"
 ```

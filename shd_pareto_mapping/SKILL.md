@@ -1,12 +1,12 @@
 ---
-name: Excel Pareto Mapping
+name: SHD Pareto Mapping
 description: Maps Pareto sales data (Sales Qty, Sales Amt, CombinedPareto) into an SHD report based on Article Code and Site Code, and generates a summary of unmatched items.
 ---
 
-# Excel Pareto Mapping Skill
+# SHD Pareto Mapping Skill
 
 ## 1. Skill Overview
-The **Excel Pareto Mapping** skill automates the integration of sales performance metrics (e.g. quantities, amounts, and Pareto class classifications) from a sales performance report into a master Stock on Hand (SHD) inventory report. It matches entries by a composite key of Article Code and Store/Site Code. Additionally, it audits the dataset to find items present in the sales history that are missing from the current store inventory and outputs a detailed summary.
+The **SHD Pareto Mapping** skill automates the integration of sales performance metrics (e.g. quantities, amounts, and Pareto class classifications) from a sales performance report into a master Stock on Hand (SHD) inventory report. It matches entries by a composite key of Article Code and Store/Site Code. Additionally, it audits the dataset to find items present in the sales history that are missing from the current store inventory and outputs a detailed summary.
 
 ## 2. Trigger Details
 - **Trigger Keywords**: `"map pareto"`, `"map sales data to shd"`, `"pareto mapping"`, `"map sales metrics"`.
@@ -53,5 +53,5 @@ The **Excel Pareto Mapping** skill automates the integration of sales performanc
 ## 6. Execution Command
 The mapping can be executed programmatically via the backend script `map_logic.py`:
 ```powershell
-python .agent/skills/excel_pareto_mapping/scripts/map_logic.py --shd "path/to/SHD.xlsx" --pareto "path/to/Pareto.xlsx" --output "path/to/Output.xlsx"
+python .agent/skills/shd_pareto_mapping/scripts/map_logic.py --shd "path/to/SHD.xlsx" --pareto "path/to/Pareto.xlsx" --output "path/to/Output.xlsx"
 ```
