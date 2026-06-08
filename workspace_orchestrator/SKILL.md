@@ -34,7 +34,7 @@ Analyze the JSON payload and render a stunning, high-readability Markdown respon
 > ### 🔍 Auto-Detected Recommendations (Option 2)
 > - 📂 **`SHD 22052026.xlsx`** (Downloads)
 >   *   *Columns detected*: `SOH`, `Store`, `ArticleCode`, `Day 1 to 30`
->   *   *Recommended Action*: 📈 **Excel Reorder Calculation** or 🚚 **Excel Stock Rotation**
+>   *   *Recommended Action*: 📈 **Reorder Suggested Qty** or 🚚 **SHD Stock Rotation**
 > - 📂 **`PWP_Raw_Data.csv`** (Downloads)
 >   *   *Columns detected*: `SiteCodeName`, `SalesmanName`, `PWP Receipt Count`
 >   *   *Recommended Action*: 📊 **PWP Performance Analysis**
@@ -44,12 +44,12 @@ Analyze the JSON payload and render a stunning, high-readability Markdown respon
 > ### 🛠️ Workplace Skills Library Menu (Option 1)
 > If you'd like to force-run a specific analysis, please reply with the corresponding number:
 > 1.  📊 **PWP Performance Analysis** (`pwp_analysis`)
-> 2.  📈 **Excel Reorder Calculation** (`excel_reorder`)
-> 3.  🚚 **Excel Stock Rotation** (`excel_rotation`)
-> 4.  🔬 **Non-Returnable Clearance Audit** (`non_returnable_clearance`)
+> 2.  📈 **Reorder Suggested Qty** (`reorder_suggested_qty`)
+> 3.  🚚 **SHD Stock Rotation** (`shd_stock_rotation`)
+> 4.  🔬 **Non Returnable Clearance Form Remark** (`non_returnable_clearance_form_remark`)
 > 5.  🤝 **Match Local Supplier** (`match_local_supplier`)
-> 6.  🔍 **Check Article / Mass Recall** (`check_article`)
-> 7.  🗺️ **Excel Pareto Mapping** (`excel_pareto_mapping`)
+> 6.  🔍 **Article Check Recall Return** (`article_check_recall_return`)
+> 7.  🗺️ **SHD Pareto Mapping** (`shd_pareto_mapping`)
 > 8.  📢 **Procurement Update (PUR)** (`procurement_update`)
 > 
 > **How would you like to proceed?** (e.g. reply *"Run 2 on SHD"* or *"Yes, run PWP"*)

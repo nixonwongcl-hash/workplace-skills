@@ -114,8 +114,8 @@ def detect_skills(file_info, inspection):
     has_art = any("ARTICLE" in h or "ART" in h or "ITEM" in h for h in headers)
     if (has_expiry and has_qty and has_art) or "CLEARANCE" in name:
         candidates.append({
-            "skill": "non_returnable_clearance",
-            "name": "Non Returnable Clearance",
+            "skill": "non_returnable_clearance_form_remark",
+            "name": "Non Returnable Clearance Form Remark",
             "confidence": "High" if (has_expiry and has_qty and has_art) else "Medium",
             "reason": "Detected expiry dates, article numbers, and stock quantities."
         })
@@ -127,32 +127,32 @@ def detect_skills(file_info, inspection):
         # Avoid conflict with Reorder if it has SHD headers
         if "DAILY DEMAND" not in headers:
             candidates.append({
-                "skill": "excel_pareto_mapping",
-                "name": "Excel Pareto Mapping",
+                "skill": "shd_pareto_mapping",
+                "name": "SHD Pareto Mapping",
                 "confidence": "High" if any(c in headers for c in pareto_cols) else "Medium",
                 "reason": "Contains historical sales quantities and Pareto class ratings."
             })
-
+ 
     # 5. Master SHD File signatures
     # Used for: Reorder Calculation, Stock Rotation, and targets for Pareto Mapping / Clearance.
     shd_signature_cols = {"SOH", "STORE", "ARTICLECODE"}
     if shd_signature_cols.issubset(set(headers)) or "SHD" in name:
         # Standard SHD file
         candidates.append({
-            "skill": "excel_reorder",
-            "name": "Excel Reorder Calculation (Replenishment)",
+            "skill": "reorder_suggested_qty",
+            "name": "Reorder Suggested Qty",
             "confidence": "High" if "DAY 1 TO 30" in headers else "Medium",
             "reason": "Master Stock on Hand (SHD) file detected. Perfect for replenishment planning."
         })
         candidates.append({
-            "skill": "excel_rotation",
-            "name": "Excel Stock Rotation (Inter-store Transfers)",
+            "skill": "shd_stock_rotation",
+            "name": "SHD Stock Rotation",
             "confidence": "High" if "RP TYPE" in headers else "Medium",
             "reason": "Master Stock on Hand (SHD) file detected. Perfect for store rotation."
         })
         candidates.append({
-            "skill": "check_article",
-            "name": "Check Article (SOH Recall Report)",
+            "skill": "article_check_recall_return",
+            "name": "Article Check Recall Return",
             "confidence": "Medium",
             "reason": "Inventory file detected. Suitable for article stock checks/mass recalls."
         })
