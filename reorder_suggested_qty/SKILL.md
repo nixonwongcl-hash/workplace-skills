@@ -18,7 +18,6 @@ The **Reorder Suggested Qty** skill automates multi-strategy replenishment forec
   - `BO Type` (Filter out rows where `BO Type` is empty/blank)
   - `SOH` (Stock on Hand)
   - `OpenPO` (Open Purchase Orders)
-  - `OpenSTO` (Open Stock Transfer Orders)
   - `Intransit` (In-transit Stock)
   - `Day 1 to 30`, `Day 31 to 60`, `Day 61-90` (Sales buckets)
   - `TRP` (Target Reorder Pack size, defaults to 1 if missing)
@@ -28,7 +27,7 @@ The **Reorder Suggested Qty** skill automates multi-strategy replenishment forec
 1. **Daily Demand Calculation**:
    - `Daily Demand = (Day 1 to 30 + Day 31 to 60 + Day 61-90) / 90`
 2. **Pipeline Stock Calculation**:
-   - `Pipeline Stock = SOH + OpenPO + max(OpenSTO, Intransit)`
+   - `Pipeline Stock = SOH + OpenPO + Intransit`
 3. **Calculated/Logical Stock Days (`Logic_SHD`)**:
    - If `Daily Demand > 0`, `Calc_SHD = Pipeline Stock / Daily Demand`, else `999`.
    - If `SHD` is already present, `Logic_SHD = pd.to_numeric(SHD)`. Otherwise, fall back to `Calc_SHD`.
