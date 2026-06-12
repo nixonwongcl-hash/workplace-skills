@@ -32,31 +32,24 @@ The **Reorder Suggested Qty** skill automates multi-strategy replenishment forec
    - If `SHD` is already present, `Logic_SHD = pd.to_numeric(SHD)`. Otherwise, fall back to `Calc_SHD`.
 4. **Target Reorder Pack (TRP) Cleansing**:
    - Normalize `TRP` to an integer, with a minimum value of 1.
-5. **Replenishment Strategies (Raw Calculations)**:
-   - **Strat 1 (Top Up 45 - A Only)**: Focuses strictly on keeping core Class A items stocked.
-     - If `CombinedPareto == 'A'` and `Logic_SHD < 60 days`, raw reorder = `ceil(Daily Demand * 45)`. Otherwise `0`.
-   - **Strat 2 (To 90D - A Only)**: Top-up threshold for high-volume Class A items.
-     - If `CombinedPareto == 'A'` and `Logic_SHD < 45 days`, raw reorder = `max(0, ceil((Daily Demand * 90) - Pipeline Stock))`. Otherwise `0`.
-   - **Strat 3 (Pareto-Target)**: Standard target-based reorder to bring stock levels to:
-     - **Class A**: Target 60 days.
-     - **Class B**: Target 45 days.
-     - **Class C**: Target 30 days.
-     - Formula: `max(0, ceil((Daily Demand * TargetDays) - Pipeline Stock))` where `TargetDays` maps to A=60, B=45, C=30.
-   - **Strat 4 (Pareto-Additional)**: Direct injection of supply days for fast rotation if inventory is low.
-     - If `Logic_SHD < 60 days`, raw reorder = `ceil(Daily Demand * AdditionalDays)`. Otherwise `0`.
-     - `AdditionalDays` maps to A=60, B=45, C=30.
+5. **Replenishment Strategies (Raw Calculations - Pareto Class A Only)**:
+   - **Strat 1 (SHD < 45 - Top Up 45)**:
+     - If `Logic_SHD < 45 days`, raw reorder = `ceil(Daily Demand * 45)`. Otherwise `0`.
+   - **Strat 2 (SHD < 60 - Top Up 45)**:
+     - If `Logic_SHD < 60 days`, raw reorder = `ceil(Daily Demand * 45)`. Otherwise `0`.
 6. **TRP Rounding Logic**:
    - For each strategy, the raw quantity must be rounded to the nearest multiple of TRP:
      - If `TRP <= 1`, final qty = `int(raw_qty)`.
      - If `TRP > 1`, final qty = `int(round(raw_qty / TRP) * TRP)`.
-7. **Sorting**: Sort the results in ascending order of Pareto class (A -> B -> C), then by `Strat 3: Pareto-Target` descending.
+7. **Sorting**: Sort the results by `Strat 1: SHD < 45 (Top Up 45)` descending.
 
 ## 5. Output Structure & Formatting Standards
 - **File Name Format**: `[FileName]_Pareto_Analysis.xlsx`
-- **Tab 1: `Reorder Details`**: Main worksheet containing the raw dataset with calculated strategy columns appended.
+- **Filtering**: Filters the final output dataset to keep **only** Pareto Class A items.
+- **Tab 1: `Reorder Details`**: Main worksheet containing the Pareto Class A dataset with calculated strategy columns appended.
 - **Tab 2: `Pareto Analysis`**: Management summary dashboard showing:
-  - Rows for Pareto Class `A`, `B`, and `C`.
-  - Columns: `Total Articles`, `Strat (Items)` (Count of items with qty > 0), and `Strat (Qty)` (Total sum of quantities) for each of the 4 strategies.
+  - Rows for Pareto Class `A`.
+  - Columns: `Total Articles`, `Strat (Items)` (Count of items with qty > 0), and `Strat (Qty)` (Total sum of quantities) for each of the 2 strategies.
 
 ### Styling & Aesthetics:
 - **Header Row Style**: Black background, White bold text, center-aligned, with Auto-Filters enabled.

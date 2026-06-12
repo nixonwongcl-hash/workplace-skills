@@ -32,6 +32,7 @@ def process_reorder(file_path):
                 df['CombinedPareto'] = 'C'
     df['CombinedPareto'] = df['CombinedPareto'].fillna('C').astype(str).str.strip().str.upper()
     df.loc[df['CombinedPareto'] == '', 'CombinedPareto'] = 'C'
+    df = df[df['CombinedPareto'] == 'A'].copy()
 
     # Filter BO Type
     if 'BO Type' in df.columns:
@@ -64,31 +65,14 @@ def process_reorder(file_path):
         df['Logic_SHD'] = df['Calc_SHD']
 
     # --- RAW strategy values ---
-    df['_raw_s1'] = np.where(
-        (df['CombinedPareto'] == 'A') & (df['Logic_SHD'] < 60),
-        np.ceil(df['Daily Demand'] * 45), 0)
-
-    df['_raw_s2'] = np.where(
-        (df['CombinedPareto'] == 'A') & (df['Logic_SHD'] < 45),
-        np.maximum(0, np.ceil((df['Daily Demand'] * 90) - df['Pipeline Stock'])), 0)
-
-    target_days = {'A': 60, 'B': 45, 'C': 30}
-    df['_raw_s3'] = df.apply(
-        lambda x: np.maximum(0, np.ceil(x['Daily Demand'] * target_days.get(x['CombinedPareto'], 30) - x['Pipeline Stock'])),
-        axis=1)
-
-    additional_days = {'A': 60, 'B': 45, 'C': 30}
-    df['_raw_s4'] = df.apply(
-        lambda x: np.ceil(x['Daily Demand'] * additional_days.get(x['CombinedPareto'], 30)) if x['Logic_SHD'] < 60 else 0,
-        axis=1)
+    df['_raw_s1'] = np.where(df['Logic_SHD'] < 45, np.ceil(df['Daily Demand'] * 45), 0)
+    df['_raw_s2'] = np.where(df['Logic_SHD'] < 60, np.ceil(df['Daily Demand'] * 45), 0)
 
     # --- TRP-Adjusted Final Values ---
-    raw_cols = ['_raw_s1', '_raw_s2', '_raw_s3', '_raw_s4']
+    raw_cols = ['_raw_s1', '_raw_s2']
     final_names = [
-        'Strat 1: Top Up 45 (A Only)',
-        'Strat 2: To 90D (A Only)',
-        'Strat 3: Pareto-Target',
-        'Strat 4: Pareto-Additional'
+        'Strat 1: SHD < 45 (Top Up 45)',
+        'Strat 2: SHD < 60 (Top Up 45)'
     ]
     for raw_col, final_col in zip(raw_cols, final_names):
         df[final_col] = [round_to_trp(r, t) for r, t in zip(df[raw_col], df['TRP'])]
@@ -107,8 +91,7 @@ def process_reorder(file_path):
     df.drop(columns=['Logic_SHD', 'Calc_SHD'] + raw_cols, inplace=True)
 
     # Sorting
-    df['_order'] = df['CombinedPareto'].map({'A': 1, 'B': 2, 'C': 3}).fillna(4)
-    df = df.sort_values(['_order', 'Strat 3: Pareto-Target'], ascending=[True, False]).drop(columns=['_order'])
+    df = df.sort_values(['Strat 1: SHD < 45 (Top Up 45)'], ascending=[False])
     df = df.reset_index(drop=True)
 
     # --- Output ---
@@ -159,7 +142,7 @@ def process_reorder(file_path):
 
             # Pareto Analysis Summary Tab
             summary_rows = []
-            for p_class in ['A', 'B', 'C']:
+            for p_class in ['A']:
                 p_df = df[df['CombinedPareto'] == p_class]
                 row  = {'Pareto Class': p_class, 'Total Articles': len(p_df)}
                 for strat in final_names:
