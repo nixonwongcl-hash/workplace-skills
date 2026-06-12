@@ -22,11 +22,14 @@ def process_reorder(file_path):
 
     # Pareto Mapping
     if 'CombinedPareto' not in df.columns:
-        pareto_cols = [c for c in df.columns if 'Pareto' in c]
-        if pareto_cols:
-            df.rename(columns={pareto_cols[0]: 'CombinedPareto'}, inplace=True)
+        if 'Pareto' in df.columns:
+            df.rename(columns={'Pareto': 'CombinedPareto'}, inplace=True)
         else:
-            df['CombinedPareto'] = 'C'
+            pareto_cols = [c for c in df.columns if 'Pareto' in c]
+            if pareto_cols:
+                df.rename(columns={pareto_cols[0]: 'CombinedPareto'}, inplace=True)
+            else:
+                df['CombinedPareto'] = 'C'
     df['CombinedPareto'] = df['CombinedPareto'].fillna('C').astype(str).str.strip().str.upper()
     df.loc[df['CombinedPareto'] == '', 'CombinedPareto'] = 'C'
 

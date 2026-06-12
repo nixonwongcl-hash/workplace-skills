@@ -14,7 +14,7 @@ The **Reorder Suggested Qty** skill automates multi-strategy replenishment forec
 
 ## 3. Data Input Requirements
 - **Required Columns**:
-  - `CombinedPareto` (Defaults to `'C'` if missing or empty)
+  - `Pareto` (or `CombinedPareto`, directly present in the source SHD file; there is no need to match or join with a separate Pareto/sales data file)
   - `BO Type` (Filter out rows where `BO Type` is empty/blank)
   - `SOH` (Stock on Hand)
   - `OpenPO` (Open Purchase Orders)
