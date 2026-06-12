@@ -45,9 +45,9 @@ def process_reorder(file_path):
     df['Daily Demand'] = (df['Day 1 to 30'] + df['Day 31 to 60'] + df['Day 61-90']) / 90
 
     # Pipeline Stock
-    for col in ['SOH', 'OpenPO', 'Intransit']:
+    for col in ['SOH', 'Intransit']:
         df[col] = pd.to_numeric(df.get(col, 0), errors='coerce').fillna(0)
-    df['Pipeline Stock'] = df['SOH'] + df['OpenPO'] + df['Intransit']
+    df['Pipeline Stock'] = df['SOH'] + df['Intransit']
 
     # TRP
     if 'TRP' in df.columns:
