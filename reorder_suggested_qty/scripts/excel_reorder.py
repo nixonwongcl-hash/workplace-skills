@@ -34,11 +34,6 @@ def process_reorder(file_path):
     df.loc[df['CombinedPareto'] == '', 'CombinedPareto'] = 'C'
     df = df[df['CombinedPareto'] == 'A'].copy()
 
-    # Filter BO Type
-    if 'BO Type' in df.columns:
-        df['BO Type'] = df['BO Type'].replace(r'^\s*$', np.nan, regex=True)
-        df = df.dropna(subset=['BO Type']).copy()
-
     # Daily Demand
     for col in ['Day 1 to 30', 'Day 31 to 60', 'Day 61-90']:
         if col in df.columns:

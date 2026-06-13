@@ -15,7 +15,6 @@ The **Reorder Suggested Qty** skill automates multi-strategy replenishment forec
 ## 3. Data Input Requirements
 - **Required Columns**:
   - `Pareto` (or `CombinedPareto`, directly present in the source SHD file; there is no need to match or join with a separate Pareto/sales data file)
-  - `BO Type` (Filter out rows where `BO Type` is empty/blank)
   - `SOH` (Stock on Hand)
   - `Intransit` (In-transit Stock)
   - `Day 1 to 30`, `Day 31 to 60`, `Day 61-90` (Sales buckets)
