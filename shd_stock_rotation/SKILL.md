@@ -25,7 +25,20 @@ Before running the rotation calculations, you **MUST** present these 4 setup que
    - Do you want to filter by a **Specific Category** (e.g. `"MEDICINE only"`) or analyze **All Categories**?
      - *If "MEDICINE" is selected, follow up*: Should we rotate **Group B**, **Group C**, or **Both** Poison Classes?
      - *If SOS filtering is desired*: Should we filter by **SOS** type (`"DC"`, `"DSP"`, or `"All"`)?
-4. **Special Instructions**: Are there any custom rules to apply? (e.g., specific outlets to skip as senders, or priority items).
+4. **Special Instructions**: Are there any custom rules to apply? Select all that apply:
+   - **Priority Sender Outlet**: Force maximum rotation *out* of a specific store for a given brand or subcategory (e.g., *"Maximise rotation out of KKDA for Lily Ba brand and COSMETICS-LIP & ORAL-LIP CARE subcategory"*).
+   - **Skip Sender Stores**: Exclude specific outlets from acting as senders entirely.
+   - **Priority Receiver Stores**: Give certain outlets first pick when receiving stock.
+   - **Custom rules**: Any other bespoke logic (describe in free text).
+5. **Subcategory Exclusions**: Are there any subcategories that should be **completely excluded** from rotation (neither sent nor received)?
+   - **REHAB Standard Exclusion** *(pre-defined)*: Exclude all rows where `SubCategory` is any of:
+     - `REHAB-HOSP BED/ACCS`
+     - `REHAB-L/WT WHEELCHR`
+     - `REHAB-COMMODE CHAIR`
+     - `REHAB-SP WHEELCHAIR`
+     - `REHAB-STD WHEELCHAIR`
+   - **Custom Exclusions**: Specify any additional subcategories to exclude.
+   - *If no exclusions are needed, answer "None".*
 
 ## 4. Detailed Business & Calculation Logic
 1. **Daily Demand Calculation**:
@@ -89,3 +102,18 @@ python .agent/skills/shd_stock_rotation/scripts/excel_rotation.py
 ### Advanced CLI Flags:
 - `--receiver_shd_limit [Days]`: Set strict receiving SHD limits (e.g., `--receiver_shd_limit 30`).
 - `--ignore_forecast`: Skip the safety "keep 1 unit" rule for forecast-enabled Senders.
+- `--skip_sender_stores [STORE_CODES]`: Comma-separated store codes to exclude as senders.
+- `--priority_receivers [STORE_CODES]`: Comma-separated store codes to prioritise as receivers.
+- `--skip_receiver_stores [STORE_CODES]`: Comma-separated store codes to exclude as receivers.
+
+## 7. Special Instruction Patterns
+
+### REHAB Subcategory Exclusion *(Standard Practice)*
+When the user requests REHAB exclusion (Q5), filter out all rows where `SubCategory` exactly matches any of the REHAB entries **before** running the rotation engine. This applies to both sender and receiver pools.
+
+### Priority Sender Outlet (e.g., KKDA Maximise)
+When a store is flagged as a priority sender for a specific **brand** or **subcategory**:
+- Override the standard SHD threshold — rotate out regardless of whether SHD meets the ≥ 120 threshold.
+- Keep logic: retain `0` units (or `1` if RP Type contains `"Forecast"`).
+- Tag these transfers with `Reason = "KKDA Priority Clearance"` (or similar outlet-specific label) in the output.
+- This is applied **per article** — only rows matching the brand/subcategory filter at that outlet are affected; other articles at the same outlet follow standard rules.
