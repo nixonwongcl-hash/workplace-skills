@@ -12,14 +12,15 @@ The **Reorder Suggested Qty** skill automates multi-strategy replenishment forec
 - **Trigger Keywords**: `"calculate reorder"`, `"reorder qty"`, `"reorder"`, `"replenish stock"`.
 - **Trigger Condition**: When these keywords are detected alongside an uploaded SHD Excel sheet, the skill executes.
 
-## 3. Data Input Requirements
-- **Required Columns**:
-  - `Pareto` (or `CombinedPareto`, directly present in the source SHD file; there is no need to match or join with a separate Pareto/sales data file)
-  - `SOH` (Stock on Hand)
-  - `Intransit` (In-transit Stock)
-  - `Day 1 to 30`, `Day 31 to 60`, `Day 61-90` (Sales buckets)
-  - `TRP` (Target Reorder Pack size, defaults to 1 if missing)
-  - `SHD` (Existing stock days, optional)
+## 3. Mandatory Interactive Customization Questions
+Before running the report script, the agent **MUST** ask the user these questions to customize the filters and strategies:
+1. **Pareto Class Filter**: Which Pareto classes should be included? (Options: A only, A & B, All Classes A/B/C)
+2. **RP Type Filter**: Which RP Type should be targeted? (Options: Store SGO only, Store AO only, Manual Order only, No filter)
+3. **SHD Threshold**: What is the maximum SHD threshold? (Options: SHD 120 or less, SHD 45 or less, SHD 30 or less, No SHD filter)
+4. **Intransit Limit**: What should be the Intransit stock condition? (Options: Intransit = 0 only, No Intransit filter)
+5. **Top-Up Strategy**: What is the target Top Up Days calculation strategy? (Options: Top Up 60 Days, Top Up 45 Days, Top Up 30 Days, Default Multi-Strategy)
+
+The agent must use the `ask_question` tool to present these options dynamically.
 
 ## 4. Detailed Business & Calculation Logic
 1. **Daily Demand Calculation**:
@@ -31,36 +32,29 @@ The **Reorder Suggested Qty** skill automates multi-strategy replenishment forec
    - If `SHD` is already present, `Logic_SHD = pd.to_numeric(SHD)`. Otherwise, fall back to `Calc_SHD`.
 4. **Target Reorder Pack (TRP) Cleansing**:
    - Normalize `TRP` to an integer, with a minimum value of 1.
-5. **Replenishment Strategies (Raw Calculations - Pareto Class A Only)**:
-   - **Strat 1 (SHD < 45 - Top Up 45)**:
-     - If `Logic_SHD < 45 days`, raw reorder = `ceil(Daily Demand * 45)`. Otherwise `0`.
-   - **Strat 2 (SHD < 60 - Top Up 45)**:
-     - If `Logic_SHD < 60 days`, raw reorder = `ceil(Daily Demand * 45)`. Otherwise `0`.
+5. **Replenishment Strategies**:
+   - **Default Multi-Strategy (Pareto Class A Only)**:
+     - **Strat 1 (SHD < 45 - Top Up 45)**:
+       - If `Logic_SHD < 45 days`, raw reorder = `ceil(Daily Demand * 45)`. Otherwise `0`.
+     - **Strat 2 (SHD < 60 - Top Up 45)**:
+       - If `Logic_SHD < 60 days`, raw reorder = `ceil(Daily Demand * 45)`. Otherwise `0`.
+   - **Custom Days Override (e.g. `--top_up_days 60`)**:
+     - Raw suggested qty = `ceil(Daily Demand * top_up_days)`
 6. **TRP Rounding Logic**:
    - For each strategy, the raw quantity must be rounded to the nearest multiple of TRP:
      - If `TRP <= 1`, final qty = `int(raw_qty)`.
      - If `TRP > 1`, final qty = `int(round(raw_qty / TRP) * TRP)`.
-7. **Sorting**: Sort the results by `Strat 1: SHD < 45 (Top Up 45)` descending.
+7. **Sorting**: Sort the results by the primary strategy column descending.
 
-## 5. Output Structure & Formatting Standards
-- **File Name Format**: `[FileName]_Pareto_Analysis.xlsx`
-- **Filtering**: Filters the final output dataset to keep **only** Pareto Class A items.
-- **Tab 1: `Reorder Details`**: Main worksheet containing the Pareto Class A dataset with calculated strategy columns appended.
-- **Tab 2: `Pareto Analysis`**: Management summary dashboard showing:
-  - Rows for Pareto Class `A`.
-  - Columns: `Total Articles`, `Strat (Items)` (Count of items with qty > 0), and `Strat (Qty)` (Total sum of quantities) for each of the 2 strategies.
-
-### Styling & Aesthetics:
-- **Header Row Style**: Black background, White bold text, center-aligned, with Auto-Filters enabled.
-- **Freeze Panes**: Locked on row 1 and columns A & B (`freeze_panes(1, 2)`) to allow scrolling while keeping article identification visible.
-- **Alignments**: Center-aligned for all columns except `ArticleDesc`, which is left-aligned. Auto-fitted column widths.
-- **Conditional Alert Fills (Applied to Strategy Columns Only)**:
-  - **Red Fill (`#FFCDD2`)**: If the article is Class A or B, and current `SOH == 0`. (Critical Out of Stock alert)
-  - **Orange Fill (`#FFE0B2`)**: If the article is Class A or B, and current `Logic_SHD < 45 days` (excluding SOH = 0 items). (Low stock warning)
-  - **Yellow Fill (`#FFFDE7`)**: If the raw suggested quantity is greater than 0, but TRP rounding reduces it to 0. (TRP bottleneck alert)
-
-## 6. Execution Command
+## 5. Execution Command
 The reorder calculation is performed by executing the python CLI script:
 ```powershell
-python .agent/skills/reorder_suggested_qty/scripts/excel_reorder.py "path/to/SHD_File.xlsx"
+python .agent/skills/reorder_suggested_qty/scripts/excel_reorder.py "path/to/SHD_File.xlsx" [options]
 ```
+
+### Supported Options:
+- `--pareto <classes>`: Comma-separated list of Pareto classes to include (e.g. `A`, `A,B`).
+- `--rp_type <type>`: RP Type substring filter (e.g. `SGO` matches `Store SGO with Forecast`).
+- `--max_shd <days>`: Max SHD threshold (e.g. `120`).
+- `--intransit_zero`: Flag to filter Intransit == 0.
+- `--top_up_days <days>`: Specifies a custom top-up day count override (e.g. `60`).
