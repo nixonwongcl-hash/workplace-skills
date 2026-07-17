@@ -24,7 +24,7 @@ This script returns a JSON payload listing recent spreadsheets, their sheet tabs
 ### Step 2: Render the Premium Interactive Menu
 Analyze the JSON payload and render a stunning, high-readability Markdown response in the chat:
 1. **Auto-Detected Files (Option 2)**: List the detected spreadsheets and their recommended skill actions.
-2. **Standard Skills Library (Option 1)**: Present a numbered menu of all 8 available workplace skills so the user can manually route files or force-run specific routines.
+2. **Standard Skills Library (Option 1)**: Present a numbered menu of all 10 available workplace skills so the user can manually route files or force-run specific routines.
 
 #### Layout Example:
 > 🎯 **Workspace Orchestrator**
@@ -51,6 +51,8 @@ Analyze the JSON payload and render a stunning, high-readability Markdown respon
 > 6.  🔍 **Article Check Recall Return** (`article_check_recall_return`)
 > 7.  🗺️ **SHD Pareto Mapping** (`shd_pareto_mapping`)
 > 8.  📢 **Procurement Update (PUR)** (`procurement_update`)
+> 9.  📊 **PBO GP Analysis** (`pbo_gp_analysis`)
+> 10. 🚨 **Mass Recall Exposure Check** (`mass_recall_check`)
 > 
 > **How would you like to proceed?** (e.g. reply *"Run 2 on SHD"* or *"Yes, run PWP"*)
 
