@@ -157,6 +157,29 @@ def detect_skills(file_info, inspection):
             "reason": "Inventory file detected. Suitable for article stock checks/mass recalls."
         })
 
+    # 6. PBO GP Analysis
+    # Signature: PenetrationTracker, BO_Type, Qty (1S), SalesAmt, GrossProfit, GP %
+    pbo_cols = {"PENETRATIONTRACKER", "BO_TYPE", "QTY (1S)", "SALESAMT", "GROSSPROFIT", "GP %"}
+    if any(c in headers for c in pbo_cols) or "PENETRATION" in name or "PBO" in name:
+        candidates.append({
+            "skill": "pbo_gp_analysis",
+            "name": "PBO GP Analysis",
+            "confidence": "High" if any(c in headers for c in pbo_cols) else "Medium",
+            "reason": "Detected Penetration Tracker pivot data with GP margin columns."
+        })
+
+    # 7. Mass Recall Check
+    # Signature: Return Reason, SOH, Store Code — or filename containing "Recall_Report"
+    recall_cols = {"RETURN REASON", "STORE CODE", "SOH"}
+    has_recall_cols = sum(1 for c in recall_cols if c in set(headers)) >= 2
+    if has_recall_cols or "RECALL" in name:
+        candidates.append({
+            "skill": "mass_recall_check",
+            "name": "Mass Recall Exposure Check",
+            "confidence": "High" if has_recall_cols else "Medium",
+            "reason": "Detected recall report with Return Reason and store-level SOH data."
+        })
+
     return candidates
 
 def main():
