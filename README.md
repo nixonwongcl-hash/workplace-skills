@@ -39,7 +39,7 @@ python scripts/verify_skill_versions.py
 Refresh an installed skill root from the canonical repository:
 
 ```powershell
-python scripts/sync_skill_versions.py --target C:\Users\USER\.codex\skills
+python scripts/sync_skill_versions.py --target C:\Users\USER\.codex\skills --target C:\Users\USER\.claude\skills --target C:\Users\USER\.gemini\antigravity\playground\azure-radiation\.agents\skills
 ```
 
 Increment the affected skill version whenever its instructions or executable behavior changes.
