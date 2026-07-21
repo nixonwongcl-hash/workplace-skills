@@ -43,8 +43,12 @@ try {
     $taskAction = ('"{0}" "{1}" --repo-root "{2}"' -f $PythonExe, $updater, $RepoRoot)
     & "$env:SystemRoot\System32\schtasks.exe" /Create /TN $taskName /TR $taskAction /SC HOURLY /MO 6 /F | Out-Null
     if ($LASTEXITCODE -ne 0) { throw "Could not create six-hour update task." }
+    $previousErrorAction = $ErrorActionPreference
+    $ErrorActionPreference = "SilentlyContinue"
     & "$env:SystemRoot\System32\schtasks.exe" /Create /TN $logonTaskName /TR $taskAction /SC ONLOGON /F 2>$null | Out-Null
-    if ($LASTEXITCODE -ne 0) {
+    $logonTaskExitCode = $LASTEXITCODE
+    $ErrorActionPreference = $previousErrorAction
+    if ($logonTaskExitCode -ne 0) {
         Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" -Name "WorkplaceSkillsAutoUpdate" -Value $taskAction
         Write-Warning "ONLOGON task was denied; installed a per-user logon entry instead."
     }
