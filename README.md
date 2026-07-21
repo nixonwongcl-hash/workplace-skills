@@ -46,6 +46,30 @@ Increment the affected skill version whenever its instructions or executable beh
 
 ---
 
+## Shared Local Skill Store
+
+Use C:\Users\USER\Workplace-Skills as the canonical checkout. Supported agents access the same workplace skill folders through per-skill Windows junctions, while unrelated agent-specific skills remain local.
+
+Audit planned or installed links:
+
+    python scripts/manage_skill_links.py install --dry-run
+    python scripts/manage_skill_links.py audit
+
+Install or repair links with recoverable backups:
+
+    python scripts/manage_skill_links.py install
+
+Restore a migration:
+
+    python scripts/manage_skill_links.py restore --backup "C:\Users\USER\Workplace-Skills-Backups\<timestamp>"
+
+Install automatic fast-forward checks at logon and every six hours:
+
+    powershell -ExecutionPolicy Bypass -File scripts\install_update_schedule.ps1
+
+The updater refuses to pull when the canonical checkout has local changes. It never resets, commits, pushes, or resolves conflicts automatically.
+
+---
 ## 🔄 Automated Operations Workflow
 
 These skills are designed to function together as an integrated replenishment and balancing pipeline:

@@ -1,5 +1,9 @@
 # Workspace Customization Rules
 
+## Canonical Local Store
+
+Use C:\Users\USER\Workplace-Skills as the only editable workplace-skill source. Agent skill folders are managed junctions to this checkout. Before execution, run the version and link audits. Never replace a managed junction with a copied folder. Automatic pulls must remain fast-forward-only and must stop on local changes.
+
 ## Mandatory Skill Version Check
 
 The repository root is the only canonical skill source. Before using a workplace skill:
