@@ -1,5 +1,11 @@
 # Workplace Skills — Project Rules
 
+## Mandatory Skill Version Check
+
+The repository root is the canonical source for workplace skills. Before executing a skill, compare its `## Version` value with `skill_versions.json`. If the working or installed copy is older, missing, or unversioned, refresh it from the canonical root before running it.
+
+Validate with `python scripts/verify_skill_versions.py`.
+
 ## Clarifying Missing Information
 
 When executing any workspace task or processing inventory files (such as stock status checks, mass recalls, reordering calculations, supplier mapping, or stock rotation):

@@ -8,7 +8,7 @@ These skills are structured to be executed seamlessly by both developers and AI 
 
 ## 📋 Directory of Available Skills
 
-This repository contains **9 core skills** (including a **Unified Workspace Orchestrator** entry point) optimized for automated logistics, procurement, and operations:
+This repository contains **11 versioned core skills** (including a **Unified Workspace Orchestrator** entry point) optimized for automated logistics, procurement, and operations:
 
 | Skill Folder | Skill Name | Trigger Keywords | Primary Business Function |
 | :--- | :--- | :--- | :--- |
@@ -21,6 +21,28 @@ This repository contains **9 core skills** (including a **Unified Workspace Orch
 | [📁 `non_returnable_clearance_form_remark`](./non_returnable_clearance_form_remark) | **Non Returnable Clearance Form Remark** | `"non returnable clearance"` | Audits manual clearance lists of near-expiry stocks against SHD reports to suggest pricing actions or rotation routes. |
 | [📁 `procurement_update`](./procurement_update) | **Procurement Update Intelligence** | `"PUR"`, combined with Lark Sheet URL | Pulls log entries from Lark Sheets, maps item priorities, and sends automated summaries to Lark Docs, IMs, and webhooks. |
 | [📁 `pwp_analysis`](./pwp_analysis) | **PWP Performance Analysis** | `"analyse pwp"`, `"pwp performance"` | Splits raw Purchase With Purchase transactions by site, pivots daily performance, ranks salesmen, and highlights outliers. |
+| [📁 `pbo_gp_analysis`](./pbo_gp_analysis) | **PBO GP Analysis** | `"pbo gp"`, `"gp penetration"` | Analyzes category margin winners, weighted GP%, trends, and outlet performance. |
+| [📁 `vaccination_mapping`](./vaccination_mapping) | **Vaccination Mapping** | `"vaccination mapping"` | Maps vaccination records using the maintained workplace workflow. |
+
+---
+
+## 🔢 Skill Versioning
+
+Every canonical skill declares a semantic version in its `SKILL.md`. The machine-readable source of truth is `skill_versions.json`. Agents must compare their local copy with this manifest before execution and refresh stale copies.
+
+Validate the repository:
+
+```powershell
+python scripts/verify_skill_versions.py
+```
+
+Refresh an installed skill root from the canonical repository:
+
+```powershell
+python scripts/sync_skill_versions.py --target C:\Users\USER\.codex\skills
+```
+
+Increment the affected skill version whenever its instructions or executable behavior changes.
 
 ---
 

@@ -1,9 +1,12 @@
 ---
-name: Match Local Supplier
+name: match-local-supplier
 description: Maps a reorder list against a local ordering file (e.g., Sabah POISON tab) to append supplier, pricing details, and calculate 30/60 days top-up quantities. Triggered by keywords "match local supplier".
 ---
 
 # Match Local Supplier Skill
+
+## Version
+Current version: **v1.0.0** (2026-07-21)
 
 ## 1. Skill Overview
 The **Match Local Supplier** skill integrates regional vendor-sourcing details into calculated reorder proposals. It matches articles from a calculated reorder list against a master Local Ordering database (specifically target sheets like `POISON TO ORDER LOCALLY `). The skill filters target items strictly to the human medicine segment, fetches vendor names, nett costs, and pricing structures, calculates top-ups for alternate duration coverage, and aggregates results.

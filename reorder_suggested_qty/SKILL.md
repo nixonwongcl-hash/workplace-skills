@@ -1,9 +1,12 @@
 ---
-name: Reorder Suggested Qty
+name: reorder-suggested-qty
 description: Calculates suggested reorder quantities based on Pareto strategies (A, B, C), using SHD Excel data. Triggered by keywords "calculate reorder", "reorder qty", or "reorder".
 ---
 
 # Reorder Suggested Qty Skill
+
+## Version
+Current version: **v1.0.0** (2026-07-21)
 
 ## 1. Skill Overview
 The **Reorder Suggested Qty** skill automates multi-strategy replenishment forecasting for store inventories. It implements a **Pareto-driven replenishment engine** that dynamically reacts to an item's Pareto classification (Class A, B, or C). It calculates daily demand, computes total pipeline stock, projects supply days, applies distinct reorder strategies, and rounds quantities to fit Target Reorder Pack sizes (TRP) while applying visual alert indicators.

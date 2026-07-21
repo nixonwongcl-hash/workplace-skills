@@ -1,0 +1,52 @@
+{
+    "schema_version":  1,
+    "updated":  "2026-07-21",
+    "canonical_layout":  "\u003cskill_folder\u003e/SKILL.md",
+    "version_policy":  "Increment semantic version whenever instructions or executable behavior changes.",
+    "skills":  {
+                   "article_check_recall_return":  {
+                                                       "version":  "1.0.0",
+                                                       "path":  "article_check_recall_return/SKILL.md"
+                                                   },
+                   "match_local_supplier":  {
+                                                "version":  "1.0.0",
+                                                "path":  "match_local_supplier/SKILL.md"
+                                            },
+                   "non_returnable_clearance_form_remark":  {
+                                                                "version":  "1.0.0",
+                                                                "path":  "non_returnable_clearance_form_remark/SKILL.md"
+                                                            },
+                   "pbo_gp_analysis":  {
+                                           "version":  "1.0.0",
+                                           "path":  "pbo_gp_analysis/SKILL.md"
+                                       },
+                   "procurement_update":  {
+                                              "version":  "1.0.0",
+                                              "path":  "procurement_update/SKILL.md"
+                                          },
+                   "pwp_analysis":  {
+                                        "version":  "1.0.0",
+                                        "path":  "pwp_analysis/SKILL.md"
+                                    },
+                   "reorder_suggested_qty":  {
+                                                 "version":  "1.0.0",
+                                                 "path":  "reorder_suggested_qty/SKILL.md"
+                                             },
+                   "shd_pareto_mapping":  {
+                                              "version":  "1.0.0",
+                                              "path":  "shd_pareto_mapping/SKILL.md"
+                                          },
+                   "shd_stock_rotation":  {
+                                              "version":  "1.0.0",
+                                              "path":  "shd_stock_rotation/SKILL.md"
+                                          },
+                   "vaccination_mapping":  {
+                                               "version":  "1.0.0",
+                                               "path":  "vaccination_mapping/SKILL.md"
+                                           },
+                   "workspace_orchestrator":  {
+                                                  "version":  "1.0.0",
+                                                  "path":  "workspace_orchestrator/SKILL.md"
+                                              }
+               }
+}

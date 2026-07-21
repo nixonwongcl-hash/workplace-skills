@@ -1,9 +1,12 @@
 ---
-name: Workspace Orchestrator
+name: workspace-orchestrator
 description: Unified entry point (Option 1 & 2) that auto-detects spreadsheet schemas to identify candidate workplace skills and displays an interactive menu in chat.
 ---
 
 # Workspace Orchestrator Skill
+
+## Version
+Current version: **v1.0.0** (2026-07-21)
 
 ## 1. Skill Overview
 The **Workspace Orchestrator** is a unified command hub designed to eliminate trigger keyword memorization. It integrates **Option 1 (Interactive Selection Menu)** and **Option 2 (Zero-Keyword Auto-Detection)** into a single streamlined operations framework. When triggered, it analyzes spreadsheets in the workspace and Downloads folder, identifies the structure of the data, and displays recommendations and direct action menus.
@@ -24,13 +27,13 @@ This script returns a JSON payload listing recent spreadsheets, their sheet tabs
 ### Step 2: Render the Premium Interactive Menu
 Analyze the JSON payload and render a stunning, high-readability Markdown response in the chat:
 1. **Auto-Detected Files (Option 2)**: List the detected spreadsheets and their recommended skill actions.
-2. **Standard Skills Library (Option 1)**: Present a numbered menu of all 10 available workplace skills so the user can manually route files or force-run specific routines.
+2. **Standard Skills Library (Option 1)**: Present a numbered menu of all 11 available workplace skills so the user can manually route files or force-run specific routines.
 
 #### Layout Example:
 > 🎯 **Workspace Orchestrator**
-> 
+>
 > I have scanned your workspace and Downloads folders for recent spreadsheet data:
-> 
+>
 > ### 🔍 Auto-Detected Recommendations (Option 2)
 > - 📂 **`SHD 22052026.xlsx`** (Downloads)
 >   *   *Columns detected*: `SOH`, `Store`, `ArticleCode`, `Day 1 to 30`
@@ -38,9 +41,9 @@ Analyze the JSON payload and render a stunning, high-readability Markdown respon
 > - 📂 **`PWP_Raw_Data.csv`** (Downloads)
 >   *   *Columns detected*: `SiteCodeName`, `SalesmanName`, `PWP Receipt Count`
 >   *   *Recommended Action*: 📊 **PWP Performance Analysis**
-> 
+>
 > ---
-> 
+>
 > ### 🛠️ Workplace Skills Library Menu (Option 1)
 > If you'd like to force-run a specific analysis, please reply with the corresponding number:
 > 1.  📊 **PWP Performance Analysis** (`pwp_analysis`)
@@ -52,8 +55,9 @@ Analyze the JSON payload and render a stunning, high-readability Markdown respon
 > 7.  🗺️ **SHD Pareto Mapping** (`shd_pareto_mapping`)
 > 8.  📢 **Procurement Update (PUR)** (`procurement_update`)
 > 9.  📊 **PBO GP Analysis** (`pbo_gp_analysis`)
-> 10. 🚨 **Mass Recall Exposure Check** (`mass_recall_check`)
-> 
+> 10. 💉 **Vaccination Mapping** (`vaccination_mapping`)
+> 11. 🚨 **Mass Recall Exposure Check** (`mass_recall_check`)
+>
 > **How would you like to proceed?** (e.g. reply *"Run 2 on SHD"* or *"Yes, run PWP"*)
 
 ### Step 3: Execute the Chosen Skill
@@ -66,4 +70,3 @@ Once the user selects a skill from the menu, the agent **MUST** ask a secondary 
 3. **Wait for explicit user permission**: Do not execute any commands or call any tools that perform the action until the user responds with a positive affirmation (e.g. "Yes", "Go ahead", "Confirm").
 
 Once explicit confirmation is received, execute the corresponding sub-skill CLI command directly as documented in their individual `SKILL.md` profiles.
-

@@ -1,9 +1,12 @@
 ---
-name: PWP Performance Analysis
+name: pwp-performance-analysis
 description: Analyzes PWP Receipt Count performance from Excel data, generating site-specific reports with UTD totals and top/bottom rankings.
 ---
 
 # PWP Performance Analysis Skill
+
+## Version
+Current version: **v1.0.0** (2026-07-21)
 
 ## 1. Skill Overview
 The **PWP Performance Analysis** skill automates the tracking, pivoting, and reporting of Purchase With Purchase (PWP) sales transactions. Taking raw transactional logs containing site, dates, and salesman names, it splits the dataset by outlet, computes daily sales volumes, ranks sales performers, calculates up-to-date (UTD) cumulative totals, and applies professional conditional formatting highlights to identify top and bottom performers on a daily basis.
