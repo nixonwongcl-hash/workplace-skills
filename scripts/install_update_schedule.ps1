@@ -6,9 +6,13 @@ param(
 
 $ErrorActionPreference = "Stop"
 $taskName = "Workplace Skills Auto Update"
+$logonTaskName = "$taskName At Logon"
 
 if ($Uninstall) {
     Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue
+    Unregister-ScheduledTask -TaskName $logonTaskName -Confirm:$false -ErrorAction SilentlyContinue
+    & "$env:SystemRoot\System32\schtasks.exe" /Delete /TN $taskName /F 2>$null | Out-Null
+    & "$env:SystemRoot\System32\schtasks.exe" /Delete /TN $logonTaskName /F 2>$null | Out-Null
     Write-Output "Removed scheduled task: $taskName"
     exit 0
 }
@@ -31,7 +35,16 @@ $action = New-ScheduledTaskAction -Execute $PythonExe -Argument $arguments
 $logonTrigger = New-ScheduledTaskTrigger -AtLogOn
 $repeatTrigger = New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(5) -RepetitionInterval (New-TimeSpan -Hours 6) -RepetitionDuration (New-TimeSpan -Days 3650)
 $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Minutes 10)
-Register-ScheduledTask -TaskName $taskName -Action $action -Trigger @($logonTrigger, $repeatTrigger) -Settings $settings -Description "Fast-forward and validate the shared workplace skill store." -Force | Out-Null
+try {
+    Register-ScheduledTask -TaskName $taskName -Action $action -Trigger @($logonTrigger, $repeatTrigger) -Settings $settings -Description "Fast-forward and validate the shared workplace skill store." -Force | Out-Null
+} catch {
+    Write-Warning "ScheduledTasks API was denied; falling back to user-level schtasks entries."
+    $taskAction = ('"{0}" "{1}" --repo-root "{2}"' -f $PythonExe, $updater, $RepoRoot)
+    & "$env:SystemRoot\System32\schtasks.exe" /Create /TN $taskName /TR $taskAction /SC HOURLY /MO 6 /F | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw "Could not create six-hour update task." }
+    & "$env:SystemRoot\System32\schtasks.exe" /Create /TN $logonTaskName /TR $taskAction /SC ONLOGON /F | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw "Could not create logon update task." }
+}
 
 Write-Output "Installed scheduled task: $taskName"
 Write-Output "Python: $PythonExe"
