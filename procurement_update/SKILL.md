@@ -1,9 +1,12 @@
 ---
-name: Procurement Update Intelligence
+name: procurement-update-intelligence
 description: Runs the PUR workflow against a Lark Sheet URL, builds a full Lark Doc summary, sends a short Lark IM brief, and sends a combined Section D webhook card for eligible promotions only.
 ---
 
 # Procurement Update Intelligence Skill
+
+## Version
+Current version: **v1.0.0** (2026-07-21)
 
 ## 1. Skill Overview
 The **Procurement Update Intelligence (PUR)** skill automates the extraction, categorization, formatting, and distribution of procurement directives from a master Lark Sheet. It converts a raw procurement log into a multi-channel executive communication framework:

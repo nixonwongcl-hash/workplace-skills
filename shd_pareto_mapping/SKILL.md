@@ -1,9 +1,12 @@
 ---
-name: SHD Pareto Mapping
+name: shd-pareto-mapping
 description: Maps Pareto sales data (Sales Qty, Sales Amt, CombinedPareto) into an SHD report based on Article Code and Site Code, and generates a summary of unmatched items.
 ---
 
 # SHD Pareto Mapping Skill
+
+## Version
+Current version: **v1.0.0** (2026-07-21)
 
 ## 1. Skill Overview
 The **SHD Pareto Mapping** skill automates the integration of sales performance metrics (e.g. quantities, amounts, and Pareto class classifications) from a sales performance report into a master Stock on Hand (SHD) inventory report. It matches entries by a composite key of Article Code and Store/Site Code. Additionally, it audits the dataset to find items present in the sales history that are missing from the current store inventory and outputs a detailed summary.

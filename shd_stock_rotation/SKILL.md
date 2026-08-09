@@ -1,9 +1,15 @@
 ---
-name: SHD Stock Rotation
+name: shd-stock-rotation
 description: Analyzes SHD Excel data to perform stock rotation based on exact fill and tiered sourcing logic. Triggered by keywords "rotate" or "rotation" along with an Excel file.
 ---
 
 # SHD Stock Rotation Skill
+
+## Version
+Current version: **v1.0.0** (2026-07-21)
+
+## Version
+Current version: **v1.0.0** (2026-07-21)
 
 ## 1. Skill Overview
 The **SHD Stock Rotation** skill automates the redistribution of slow-moving or excess inventory to understocked or out-of-stock retail outlets. Operating within pre-defined geographical or operational store clusters, the rotation engine identifies high-stock "Senders" and low-stock "Receivers". By balancing inventory levels, the skill minimizes waste, mitigates out-of-stock (OOS) conditions, and avoids redundant procurement.

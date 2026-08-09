@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "canonical_root": "%USERPROFILE%/Workplace-Skills",
+  "backup_root": "%USERPROFILE%/Workplace-Skills-Backups",
+  "targets": [
+    {
+      "id": "codex",
+      "name": "Codex",
+      "skills_root": "%USERPROFILE%/.codex/skills"
+    },
+    {
+      "id": "claude-code",
+      "name": "Claude Code",
+      "skills_root": "%USERPROFILE%/.claude/skills"
+    },
+    {
+      "id": "shared-agents",
+      "name": "Shared Agents",
+      "skills_root": "%USERPROFILE%/.agents/skills"
+    },
+    {
+      "id": "antigravity",
+      "name": "Antigravity",
+      "skills_root": "%USERPROFILE%/.gemini/antigravity/playground/azure-radiation/.agents/skills"
+    }
+  ]
+}
